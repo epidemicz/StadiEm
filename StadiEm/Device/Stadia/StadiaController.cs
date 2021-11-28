@@ -352,7 +352,7 @@ WRITE_STREAM_FAILURE:
 						try
 						{
 							// TODO: Allow configuring this keybind.
-							ssThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "^+Z" ) );
+							ssThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
 							ssThread.Start();
 						}
 						catch
@@ -365,7 +365,7 @@ WRITE_STREAM_FAILURE:
 						try
 						{
 							// TODO: Allow configuring this keybind.
-							vidThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "^+E" ) );
+							vidThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
 							vidThread.Start();
 						}
 						catch

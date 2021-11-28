@@ -44,6 +44,7 @@ namespace StadiEm
 				ContextMenuStrip = new ContextMenuStrip(),
 			};
 			tray.ContextMenuStrip.Items.Add( new ToolStripMenuItem( "Quit", null, Quit ) );
+			tray.Text = "Starting...";
 
 			gamepads = new List<BaseHIDController>();
 			client = new ViGEmClient();
@@ -179,18 +180,25 @@ namespace StadiEm
 						if( !( device.VendorID == LunaController.VID && device.ProductID == LunaController.PID ) )
 						{
 							reEnableDevice( devicePathToInstanceId( device.DevicePath ) );
-							oc.SetOption( OpenOption.Exclusive, true );
-							oc.SetOption( OpenOption.Transient, true );
+							// my stadia controller does not want to allow exclusive mode for some reason
+							//oc.SetOption( OpenOption.Exclusive, true );
+							//oc.SetOption( OpenOption.Transient, true );
 						}
 						oc.SetOption( OpenOption.Priority, OpenPriority.VeryHigh );
 						stream = device.Open( oc );
+
+						NotifyUser($"{device.GetFriendlyName()} Connected");
+						tray.Text = $"{device.GetFriendlyName()} Connected";
 					}
 					catch( DeviceIOException )
 					{
 						try
 						{
 							stream = device.Open();
-							NotifyUser( "Unable to open device in exclusive mode. Try reconnecting the controller; you may also need to close other apps (Steam, Discord, internet browser, etc)." );
+
+							NotifyUser($"{device.GetFriendlyName()} Connected");
+							tray.Text = $"{device.GetFriendlyName()} Connected";
+							//NotifyUser( "Unable to open device in exclusive mode. Try reconnecting the controller; you may also need to close other apps (Steam, Discord, internet browser, etc)." );
 						}
 						catch( DeviceIOException )
 						{

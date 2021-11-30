@@ -8,6 +8,8 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace StadiEm.Device.Stadia
 {
@@ -24,6 +26,8 @@ namespace StadiEm.Device.Stadia
 		public Thread ssThread, vidThread, inputThread, writeThread;
 		private AutoResetEvent writeEvent;
 		private ConcurrentQueue<byte[]> writeQueue;
+
+		private bool _turboActive = false;
 
 		public StadiaController( HidDevice device, HidStream stream, ViGEmClient client, int index ) : base( device, stream, client, index )
 		{
@@ -345,18 +349,40 @@ WRITE_STREAM_FAILURE:
 						}
 					}
 
+					if (report.R2.Value >= 255 && _turboActive)
+                    {
+						Debug.WriteLine("Should fire!");
+
+						Task.Run(() =>
+						{
+							while (report.R2.Value >= 255)
+							{
+								Debug.WriteLine("firing!");
+								var xboxSlider = (Xbox360Slider)profile[typeof(StadiaController.StadiaSlider.R2)];
+								target360.SetSliderValue(xboxSlider, 255);
+								target360.SubmitReport();
+								Thread.Sleep(20);
+								target360.SetSliderValue(xboxSlider, 0);
+								target360.SubmitReport();
+								Thread.Sleep(20);
+							}
+
+							Debug.WriteLine("... exiting ...");
+						});
+                    }
+
 					target360.SubmitReport();
 
-					if( report.Screenshot.Pressed )
-					{
-						try
-						{
-							// TODO: Allow configuring this keybind.
-							ssThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
-							ssThread.Start();
-						}
-						catch
-						{
+					if( report.Screenshot.Pressed)
+                    {
+                        try
+                        {
+                            // TODO: Allow configuring this keybind.
+                            ssThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
+                            ssThread.Start();
+                        }
+                        catch
+                        {
 						}
 					}
 
@@ -365,8 +391,11 @@ WRITE_STREAM_FAILURE:
 						try
 						{
 							// TODO: Allow configuring this keybind.
-							vidThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
-							vidThread.Start();
+							//vidThread = new Thread( () => System.Windows.Forms.SendKeys.SendWait( "{ESC}" ) );
+							//vidThread.Start();
+							_turboActive = !_turboActive;
+
+							Debug.WriteLine($"Turbo Mode: {_turboActive}");
 						}
 						catch
 						{

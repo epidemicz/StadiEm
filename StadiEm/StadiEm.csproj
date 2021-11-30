@@ -20,13 +20,13 @@
     <StartupObject>StadiEm.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\StadiEm.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\controller.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Resources\StadiEm.ico" />
+    <Content Include="Resources\controller.ico" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="hidlibrary" Version="3.3.40" />

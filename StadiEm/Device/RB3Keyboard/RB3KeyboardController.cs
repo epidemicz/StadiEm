@@ -58,6 +58,7 @@ namespace StadiEm.Device.RB3KeyboardController
 			_stream.Write( ledReport );
 			int footPedalInc = -1;
 			target360.Connect();
+			targetDS4.Connect();
 			_stream.ReadTimeout = Timeout.Infinite;
 			byte[] data = new byte[_device.GetMaxInputReportLength()];
 			while( running )

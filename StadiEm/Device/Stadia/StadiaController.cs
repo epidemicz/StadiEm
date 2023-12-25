@@ -229,7 +229,7 @@ namespace StadiEm.Device.Stadia
 
                 if (joinInputThread)
                 {
-                    writeThread.Join();
+                    //writeThread.Join();
                     inputThread.Join();
                 }
             }
